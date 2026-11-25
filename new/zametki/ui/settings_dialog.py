@@ -95,10 +95,10 @@ class SettingsDialog(QDialog):
         # --- сортировка ---
         self.cmb_sort = QComboBox()
         self.cmb_sort.addItems(
-            ['By modified date', 'By created date', 'By title'] if lang == 'en'
-            else ['По дате изменения', 'По дате создания', 'По названию']
+            ['By modified date', 'By created date', 'By title', 'Manual order'] if lang == 'en'
+            else ['По дате изменения', 'По дате создания', 'По названию', 'Ручной порядок']
         )
-        self.cmb_sort.setCurrentIndex({'modified': 0, 'created': 1, 'title': 2}.get(
+        self.cmb_sort.setCurrentIndex({'modified': 0, 'created': 1, 'title': 2, 'manual': 3}.get(
             store.setting('sort', 'modified'), 0))
         form.addRow(i18n.tr('sort', lang), self.cmb_sort)
 
@@ -255,7 +255,7 @@ class SettingsDialog(QDialog):
         # 2) настройки
         new_lang = {0: 'ru', 1: 'en'}[self.cmb_lang.currentIndex()]
         theme = {0: 'system', 1: 'light', 2: 'dark'}[self.cmb_theme.currentIndex()]
-        sort = {0: 'modified', 1: 'created', 2: 'title'}[self.cmb_sort.currentIndex()]
+        sort = {0: 'modified', 1: 'created', 2: 'title', 3: 'manual'}[self.cmb_sort.currentIndex()]
         hotkey = self.ks_hotkey.keySequence().toString() or ''
         vals = {'lang': new_lang, 'theme': theme, 'sort': sort, 'tray': self.chk_tray.isChecked(),
                 'auto_purge_trash': self.chk_auto_purge.isChecked(),

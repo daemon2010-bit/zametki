@@ -153,12 +153,19 @@ class NotesList(QListWidget):
     note_delete_requested = Signal(str)    # note_id
     note_restore_requested = Signal(str)   # note_id — вернуть из корзины
     note_star_requested = Signal(str)      # note_id — переключить «избранное»
+    notes_reordered = Signal(list)         # list[str] — новый порядок note_id после перетаскивания
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName('notes_list')
         self.setMouseTracking(True)
         self._swallow_mouse = False
+        # перетаскивание заметок друг относительно друга (не выделяет всё при движении мыши)
+        self.setDragEnabled(True)
+        self.setAcceptDrops(True)
+        self.setDropIndicatorShown(True)
+        self.setDragDropMode(QListWidget.DragDropMode.InternalMove)
+        self.setDefaultDropAction(Qt.DropAction.MoveAction)
 
     def select_single_row(self, row: int):
         """Чётко выделяет ровно одну строку (или снимает выделение при row < 0),
@@ -280,16 +287,15 @@ class NotesList(QListWidget):
             return zone.contains(pos)
         return False
 
-    def startDrag(self, actions):
-        item = self.currentItem()
-        note = item.data(NOTE_ROLE) if item else None
-        if note is None:
-            return
-        mime = QMimeData()
-        mime.setData(NOTE_MIME, note['id'].encode('ascii'))
-        drag = QDrag(self)
-        drag.setMimeData(mime)
-        drag.exec(Qt.MoveAction)
+    def dropEvent(self, event):
+        super().dropEvent(event)
+        ids = []
+        for i in range(self.count()):
+            note = self.item(i).data(NOTE_ROLE)
+            if note and note.get('id'):
+                ids.append(note['id'])
+        if ids:
+            self.notes_reordered.emit(ids)
 
 
 class FindBar(QWidget):
@@ -525,6 +531,7 @@ class MainWindow(QMainWindow):
         self.notes_list.setVerticalScrollMode(QListWidget.ScrollPerPixel)
         # ExtendedSelection: Shift — диапазон, Ctrl — по одной, Ctrl+A — все
         self.notes_list.setSelectionMode(QListWidget.SelectionMode.ExtendedSelection)
+        self.notes_list.notes_reordered.connect(self._on_notes_reordered)
         lv.addWidget(self.notes_list, 1)
         # строка статуса: количество заметок под стикерами
         self.status_label = QLabel()
@@ -1276,9 +1283,15 @@ class MainWindow(QMainWindow):
                      or search in (n.get('plain') or '').lower()]
         pinned = [n for n in notes if n.get('pinned')]
         rest = [n for n in notes if not n.get('pinned')]
-        if self.store.setting('sort', 'modified') == 'title':
+        sort_mode = self.store.setting('sort', 'modified')
+        if sort_mode == 'title':
             pinned.sort(key=lambda n: n['title'].lower())
             rest.sort(key=lambda n: n['title'].lower())
+        elif sort_mode == 'manual':
+            order = self.store.setting('manual_order', [])
+            order_idx = {nid: i for i, nid in enumerate(order)} if isinstance(order, list) else {}
+            pinned.sort(key=lambda n: (order_idx.get(n['id'], -1), -self._sort_key(n)))
+            rest.sort(key=lambda n: (order_idx.get(n['id'], -1), -self._sort_key(n)))
         else:
             pinned.sort(key=self._sort_key, reverse=True)
             rest.sort(key=self._sort_key, reverse=True)
@@ -1315,6 +1328,19 @@ class MainWindow(QMainWindow):
                 self._update_pages()
         else:
             self.notes_list.clearSelection()
+
+    def _on_notes_reordered(self, ids: list):
+        """Сохраняет ручной порядок заметок после перетаскивания мышью."""
+        if self._show_trash or not ids:
+            self.rebuild_notes()
+            return
+        # если включён фильтр/поиск, сохраняем порядок видимых и дописываем остальные
+        prev = self.store.setting('manual_order', [])
+        prev_list = list(prev) if isinstance(prev, list) else []
+        seen = set(ids)
+        merged = list(ids) + [nid for nid in prev_list if nid not in seen and nid in self.store.notes]
+        self.store.set_settings({'sort': 'manual', 'manual_order': merged})
+        self.rebuild_notes()
 
     def _detach_editor(self):
         """Безопасно отвязывает редактор от текущей заметки (после удаления/восстановления)."""
