@@ -1,0 +1,39 @@
+# Рабочие папки, бэкапы, артефакты и скриншоты
+_work/
+_rework/
+
+# Скомпилированные бинарники (выкладываются в GitHub Releases)
+*.exe
+*.apk
+*.aab
+*.zametka
+
+# Python / PyInstaller (Windows)
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+new/build/
+new/dist/
+
+# Android / Gradle
+android/.gradle/
+android/.kotlin/
+android/.idea/
+android/build/
+android/app/build/
+android/local.properties
+*.iml
+
+# Ключи, секреты, логи, системный мусор
+*.jks
+*.keystore
+*.pem
+*.key
+*.p12
+.env
+.env.*
+*.log
+.DS_Store
+Thumbs.db
