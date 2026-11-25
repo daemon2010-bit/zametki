@@ -14,6 +14,23 @@ a = Analysis(
     noarchive=False,
     optimize=0,
 )
+
+# Убираем неиспользуемые тяжёлые DLL PySide6 (OpenGL/QML/Quick/PDFium/Network/Direct2D)
+_DROP_BINS = (
+    'opengl32sw.dll',
+    'qt6quick.dll',
+    'qt6qml.dll',
+    'qt6qmlmodels.dll',
+    'qt6qmlmeta.dll',
+    'qt6qmlworkerscript.dll',
+    'qt6pdf.dll',
+    'qt6opengl.dll',
+    'qt6network.dll',
+    'qdirect2d.dll',
+    'qpdf.dll',
+)
+a.binaries = [b for b in a.binaries if not any(k in b[0].lower() for k in _DROP_BINS)]
+
 pyz = PYZ(a.pure)
 
 exe = EXE(
