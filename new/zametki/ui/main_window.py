@@ -605,8 +605,10 @@ class MainWindow(QMainWindow):
         self.size_combo.setEditable(True)
         self.size_combo.setInsertPolicy(QComboBox.InsertPolicy.NoInsert)
         self.size_combo.setToolTip('Размер текста (у выделенного или у следующего ввода)')
-        for s in (8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 36):
+        for idx, s in enumerate((8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 36)):
             self.size_combo.addItem(str(s))
+            self.size_combo.setItemData(idx, QSize(0, 22), Qt.ItemDataRole.SizeHintRole)
+        self.size_combo.setMaxVisibleItems(12)
         # симметричная форма: значение по центру, стрелка видна, все цифры влезают
         self.size_combo.setFixedWidth(64)
         self._apply_size_combo_style(False)

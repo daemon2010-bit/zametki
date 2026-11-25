@@ -161,7 +161,7 @@ def build_qss(c: dict) -> str:
         outline: 0;
     }}
     QComboBox QAbstractItemView::item {{
-        color: {c['text']}; padding: 4px 10px; min-height: 20px; border-radius: 5px;
+        color: {c['text']}; padding: 2px 10px; min-height: 20px; max-height: 24px; border-radius: 5px;
     }}
     QComboBox QAbstractItemView::item:selected {{
         background: {c['sel']}; color: {c['sel_text']};
