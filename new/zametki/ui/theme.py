@@ -156,8 +156,18 @@ def build_qss(c: dict) -> str:
     }}
     QComboBox QAbstractItemView {{
         background: {c['editor']}; color: {c['text']}; border: 1px solid {c['line']};
+        border-radius: 8px; padding: 3px;
         selection-background-color: {c['sel']}; selection-color: {c['sel_text']};
         outline: 0;
+    }}
+    QComboBox QAbstractItemView::item {{
+        color: {c['text']}; padding: 4px 10px; min-height: 20px; border-radius: 5px;
+    }}
+    QComboBox QAbstractItemView::item:selected {{
+        background: {c['sel']}; color: {c['sel_text']};
+    }}
+    QComboBox QAbstractItemView::item:hover {{
+        background: {c['hover']}; color: {c['text']};
     }}
     QComboBox QLineEdit {{
         background: transparent; border: none; padding: 0; color: {c['text']};
