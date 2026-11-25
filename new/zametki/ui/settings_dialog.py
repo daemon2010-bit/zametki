@@ -112,7 +112,7 @@ class SettingsDialog(QDialog):
         form.addRow('', self.chk_tray)
 
         self.chk_auto_purge = QCheckBox(i18n.tr('auto_purge_chk', lang))
-        self.chk_auto_purge.setChecked(bool(store.setting('auto_purge_trash', True)))
+        self.chk_auto_purge.setChecked(bool(store.setting('auto_purge_trash', False)))
         form.addRow('', self.chk_auto_purge)
 
         # --- телефон ---

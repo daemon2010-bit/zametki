@@ -434,7 +434,7 @@ class MainWindow(QMainWindow):
         QTimer.singleShot(3000, lambda: backup.run_daily_async(self.store.root))
 
     def _run_auto_purge_trash(self):
-        if self.store.setting('auto_purge_trash', True):
+        if self.store.setting('auto_purge_trash', False):
             purged = self.store.purge_expired_trash(30)
             if purged:
                 self.rebuild_notes()

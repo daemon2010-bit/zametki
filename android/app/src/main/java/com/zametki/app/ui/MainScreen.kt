@@ -815,6 +815,7 @@ private fun SettingsSheet(
 ) {
     var lang by remember { mutableStateOf(initial.lang) }
     var theme by remember { mutableStateOf(initial.theme) }
+    var autoPurge by remember { mutableStateOf(initial.autoPurgeTrash) }
     var owner by remember { mutableStateOf(initial.ownerName) }
     var device by remember { mutableStateOf(initial.deviceName) }
     var pcUrl by remember { mutableStateOf(initial.pcSyncUrl) }
@@ -826,6 +827,7 @@ private fun SettingsSheet(
     fun current() = initial.copy(
         lang = lang,
         theme = theme,
+        autoPurgeTrash = autoPurge,
         ownerName = owner.trim(),
         deviceName = device.trim(),
         pcSyncUrl = pcUrl.trim(),
@@ -853,6 +855,14 @@ private fun SettingsSheet(
                     listOf("system" to curS.themeSystem, "light" to curS.themeLight, "dark" to curS.themeDark).forEach { (k, lbl) ->
                         FilterChip(selected = theme == k, onClick = { theme = k }, label = { Text(lbl) })
                     }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(curS.autoPurgeTrash, fontSize = 13.sp, modifier = Modifier.weight(1f).padding(end = 8.dp))
+                    Switch(checked = autoPurge, onCheckedChange = { autoPurge = it })
                 }
                 OutlinedTextField(value = owner, onValueChange = { owner = it }, label = { Text(curS.ownerName) }, singleLine = true)
                 OutlinedTextField(value = device, onValueChange = { device = it }, label = { Text(curS.deviceName) }, singleLine = true)

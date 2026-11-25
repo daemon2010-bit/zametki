@@ -43,6 +43,7 @@ data class AppStrings(
     val qrFromPhoto: String,
     val qrPrompt: String,
     val qrNotFound: String,
+    val autoPurgeTrash: String,
 ) {
     companion object {
         val RU = AppStrings(
@@ -88,6 +89,7 @@ data class AppStrings(
             qrFromPhoto = "Из фото / скриншота",
             qrPrompt = "Наведите камеру на QR-код ПК или заметки",
             qrNotFound = "QR-код на изображении не найден",
+            autoPurgeTrash = "Очищать корзину старше 30 дней",
         )
 
         val EN = AppStrings(
@@ -133,6 +135,7 @@ data class AppStrings(
             qrFromPhoto = "From photo / screenshot",
             qrPrompt = "Point camera at a PC or note QR code",
             qrNotFound = "No QR code found in image",
+            autoPurgeTrash = "Auto-delete trash older than 30 days",
         )
 
         fun of(lang: String): AppStrings = if (lang.equals("en", ignoreCase = true)) EN else RU

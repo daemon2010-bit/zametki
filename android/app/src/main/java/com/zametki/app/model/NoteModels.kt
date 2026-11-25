@@ -52,5 +52,5 @@ data class AppSettings(
     val webdavUrl: String = "",
     val webdavUser: String = "",
     val webdavPass: String = "",
-    val autoPurgeTrash: Boolean = true,
+    val autoPurgeTrash: Boolean = false,
 )
